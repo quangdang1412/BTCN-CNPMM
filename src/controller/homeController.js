@@ -33,7 +33,7 @@ let getFindAllCrud = async (req, res) => {
 let postCRUD = async (req, res) => {
   let message = await CRUDService.createNewUser(req.body);
   console.log(message);
-  return res.send("Post crud to server");
+  return res.redirect("/get-crud");
 };
 
 let getEditCRUD = async (req, res) => {
@@ -61,7 +61,7 @@ let deleteCRUD = async (req, res) => {
   let id = req.query.id;
   if (id) {
     await CRUDService.deleteUserById(id);
-    return res.send("Deleted!!!!!!!!!!!!!");
+    return res.redirect("/get-crud");
   } else {
     return res.send("Not find user");
   }

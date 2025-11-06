@@ -1,49 +1,76 @@
-<div class="container">
-  <div class="row">
-    <form action="/put-crud" method="post">
-      <input
-        type="text"
-        class="form-control"
-        id="id"
-        name="id"
-        value="<%=data.id%>"
-      />
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit User</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="form-container">
+            <h2 class="mb-4">Edit User</h2>
+            <form action="/put-crud" method="post">
+              <input type="hidden" name="id" value="<%=data.id%>" />
 
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputEmail14">First Name</label>
-          <input
-            type="text"
-            class="form-control"
-            id="firstname"
-            name="firstname"
-            value="<%=data.firstname%>"
-          />
-        </div>
-        <div class="form-group col-md-6">
-          <label for="inputPassword4">Last Name</label>
-          <input
-            type="text"
-            class="form-control"
-            id="lastname"
-            name="lastname"
-            value="<%=data.lastname%>"
-          />
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="firstname">First Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="firstname"
+                    name="firstname"
+                    value="<%=data.firstname%>"
+                  />
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="lastname">Last Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="lastname"
+                    name="lastname"
+                    value="<%=data.lastname%>"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="address">Address</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="address"
+                  name="address"
+                  value="<%=data.address%>"
+                />
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">
+                Update
+              </button>
+              <a href="/get-crud" class="btn btn-secondary btn-block mt-2"
+                >Cancel</a
+              >
+            </form>
+          </div>
         </div>
       </div>
-      <div class="form-group">
-        <label for="inputAddress">Address</label>
-        <input
-          type="text"
-          class="form-control"
-          id="address"
-          placeholder="1234 Main St"
-          name="address"
-          value="<%=data.address%>"
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-  </div>
-</div>
+    </div>
+  </body>
+</html>
