@@ -1,9 +1,9 @@
-const db = require("../models/index");
+const User = require("../models/user");
 const CRUDService = require("../services/CRUDService");
 
 let getHomePage = async (req, res) => {
   try {
-    let data = await db.User.findAll();
+    let data = await User.find({});
     console.log("...........................");
     console.log(data);
     console.log("...........................");
