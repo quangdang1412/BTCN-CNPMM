@@ -1,10 +1,10 @@
-const express = require("express");
-const homeController = require("../controller/homeController");
+import express, { Application, Request, Response } from "express";
+import homeController from "../controller/homeController";
 
-let router = express.Router();
+const router = express.Router();
 
-let initWebRoutes = (app) => {
-  router.get("/", (req, res) => {
+const initWebRoutes = (app: Application): Application => {
+  router.get("/", (req: Request, res: Response) => {
     return res.send("Nguyễn Đăng Quang");
   });
   router.get("/home", homeController.getHomePage);
@@ -19,4 +19,4 @@ let initWebRoutes = (app) => {
   return app.use("/", router);
 };
 
-module.exports = initWebRoutes;
+export default initWebRoutes;
