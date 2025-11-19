@@ -3,28 +3,65 @@ import { Button, Col, Divider, Form, Input, notification, Row } from "antd";
 import { createUserApi } from "../util/api";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import * as yup from "yup";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
 
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Định dạng email không hợp lệ")
+      .required("Email là bắt buộc"),
+    password: yup
+      .string()
+      .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường và một số"
+      )
+      .required("Mật khẩu là bắt buộc"),
+    name: yup
+      .string()
+      .min(2, "Tên phải có ít nhất 2 ký tự")
+      .required("Tên là bắt buộc"),
+  });
+
   const onFinish = async (values) => {
-    const { name, email, password } = values;
+    try {
+      await validationSchema.validate(values, { abortEarly: false });
+      const { name, email, password } = values;
 
-    const res = await createUserApi(name, email, password);
+      const res = await createUserApi(name, email, password);
 
-    if (res) {
-      notification.success({
-        message: "CREATE USER",
-        description: "Success",
+      if (res) {
+        notification.success({
+          message: "Đăng ký thành công",
+          description: "Thành công",
+        });
+        navigate("/login");
+      } else {
+        notification.error({
+          message: "Đăng ký thất bại",
+          description: "Lỗi",
+        });
+      }
+    } catch (validationErrors) {
+      const errors = {};
+      validationErrors.inner.forEach((error) => {
+        errors[error.path] = error.message;
       });
-      navigate("/login");
-    } else {
-      notification.error({
-        message: "CREATE USER",
-        description: "error",
-      });
+      // Set form errors
+      form.setFields(
+        Object.keys(errors).map((key) => ({
+          name: key,
+          errors: [errors[key]],
+        }))
+      );
     }
   };
+
+  const [form] = Form.useForm();
 
   return (
     <div justify="center" style={{ marginTop: "30px" }}>
@@ -39,6 +76,7 @@ const RegisterPage = () => {
         >
           <legend>Đăng Ký Tài Khoản</legend>
           <Form
+            form={form}
             name="basic"
             onFinish={onFinish}
             autoComplete="off"
@@ -50,7 +88,11 @@ const RegisterPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your email!",
+                  message: "Vui lòng nhập email!",
+                },
+                {
+                  type: "email",
+                  message: "Vui lòng nhập email hợp lệ!",
                 },
               ]}
             >
@@ -63,7 +105,11 @@ const RegisterPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your password!",
+                  message: "Vui lòng nhập mật khẩu!",
+                },
+                {
+                  min: 6,
+                  message: "Mật khẩu phải có ít nhất 6 ký tự",
                 },
               ]}
             >
@@ -76,7 +122,11 @@ const RegisterPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your name!",
+                  message: "Vui lòng nhập tên!",
+                },
+                {
+                  min: 2,
+                  message: "Tên phải có ít nhất 2 ký tự",
                 },
               ]}
             >

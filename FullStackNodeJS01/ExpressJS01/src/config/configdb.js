@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import UserModel from "../models/user.js";
+import ProductModel from "../models/product.js";
 
 // Create connection without specifying database first
 const sequelizeInit = new Sequelize("mysql", "root", "12345", {
@@ -16,6 +17,7 @@ const sequelize = new Sequelize("node_fulltask", "root", "12345", {
 
 // Initialize models
 const User = UserModel(sequelize, Sequelize.DataTypes);
+const Product = ProductModel(sequelize, Sequelize.DataTypes);
 
 const connectDB = async () => {
   try {
@@ -35,4 +37,4 @@ const connectDB = async () => {
 };
 
 export default connectDB;
-export { sequelize, User };
+export { sequelize, User, Product };

@@ -2,7 +2,12 @@ import React, { useContext, useState } from "react";
 import { Menu } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/auth.context";
-import { HomeOutlined, TeamOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  ShoppingOutlined,
+} from "@ant-design/icons";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -21,6 +26,11 @@ const Header = () => {
             label: <Link to="/user">Users</Link>,
             key: "user",
             icon: <TeamOutlined />,
+          },
+          {
+            label: <Link to="/products">Products</Link>,
+            key: "products",
+            icon: <ShoppingOutlined />,
           },
         ]
       : []),
@@ -41,6 +51,7 @@ const Header = () => {
                         user: {
                           email: "",
                           name: "",
+                          role: "",
                         },
                       });
                       navigate("/");

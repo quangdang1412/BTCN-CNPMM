@@ -4,7 +4,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const saltRounds = 10;
 
-export const createUserService = async (name, email, password) => {
+export const createUserService = async (
+  name,
+  email,
+  password,
+  role = "User"
+) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (user) {
@@ -43,6 +48,7 @@ export const loginService = async (email, password) => {
         const payload = {
           email: user.email,
           name: user.name,
+          role: user.role,
         };
 
         const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -55,6 +61,7 @@ export const loginService = async (email, password) => {
           user: {
             email: user.email,
             name: user.name,
+            role: user.role,
           },
         };
       }

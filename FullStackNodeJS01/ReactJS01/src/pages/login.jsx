@@ -4,37 +4,64 @@ import { loginApi } from "../util/api";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../components/context/auth.context";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import * as yup from "yup";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { setAuth } = useContext(AuthContext);
 
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Định dạng email không hợp lệ")
+      .required("Email là bắt buộc"),
+    password: yup.string().required("Mật khẩu là bắt buộc"),
+  });
+
   const onFinish = async (values) => {
-    const { email, password } = values;
+    try {
+      await validationSchema.validate(values, { abortEarly: false });
+      const { email, password } = values;
 
-    const res = await loginApi(email, password);
+      const res = await loginApi(email, password);
 
-    if (res && res.EC == 0) {
-      localStorage.setItem("access_token", res.access_token);
-      notification.success({
-        message: "LOGIN USER",
-        description: "Success",
+      if (res && res.EC == 0) {
+        localStorage.setItem("access_token", res.access_token);
+        notification.success({
+          message: "Đăng nhập thành công",
+          description: "Thành công",
+        });
+        setAuth({
+          isAuthenticated: true,
+          user: {
+            email: res?.user?.email ?? "",
+            name: res?.user?.name ?? "",
+            role: res?.user?.role ?? "",
+          },
+        });
+        navigate("/");
+      } else {
+        notification.error({
+          message: "Đăng nhập thất bại",
+          description: res.EM ?? "Lỗi",
+        });
+      }
+    } catch (validationErrors) {
+      const errors = {};
+      validationErrors.inner.forEach((error) => {
+        errors[error.path] = error.message;
       });
-      setAuth({
-        isAuthenticated: true,
-        user: {
-          email: res?.user?.email ?? "",
-          name: res?.user?.name ?? "",
-        },
-      });
-      navigate("/");
-    } else {
-      notification.error({
-        message: "LOGIN USER",
-        description: res.EM ?? "error",
-      });
+      // Set form errors
+      form.setFields(
+        Object.keys(errors).map((key) => ({
+          name: key,
+          errors: [errors[key]],
+        }))
+      );
     }
   };
+
+  const [form] = Form.useForm();
 
   return (
     <Row justify="center" style={{ marginTop: "30px" }}>
@@ -49,6 +76,7 @@ const LoginPage = () => {
         >
           <legend>Đăng Nhập</legend>
           <Form
+            form={form}
             name="basic"
             onFinish={onFinish}
             autoComplete="off"
@@ -60,7 +88,11 @@ const LoginPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your email!",
+                  message: "Vui lòng nhập email!",
+                },
+                {
+                  type: "email",
+                  message: "Vui lòng nhập email hợp lệ!",
                 },
               ]}
             >
@@ -73,7 +105,7 @@ const LoginPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your password!",
+                  message: "Vui lòng nhập mật khẩu!",
                 },
               ]}
             >

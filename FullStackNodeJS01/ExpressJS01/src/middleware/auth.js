@@ -1,7 +1,8 @@
 import "dotenv/config.js";
 import jwt from "jsonwebtoken";
+import { User } from "../config/configdb.js";
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   const white_lists = ["/v1/api/register", "/v1/api/login"];
   if (white_lists.find((item) => req.originalUrl === item)) {
     next();
@@ -12,11 +13,18 @@ const auth = (req, res, next) => {
       //verify token
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = {
-          email: decoded.email,
-          name: decoded.name,
-          createdBy: "Hoidanit",
-        };
+        const user = await User.findOne({ where: { email: decoded.email } });
+        if (user) {
+          req.user = {
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        } else {
+          return res.status(401).json({
+            message: "User not found",
+          });
+        }
         console.log(">>> check token: ", decoded);
         next();
       } catch (error) {
