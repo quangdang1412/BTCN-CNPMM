@@ -22,11 +22,15 @@ const Header = () => {
     },
     ...(auth?.isAuthenticated
       ? [
-          {
-            label: <Link to="/user">Users</Link>,
-            key: "user",
-            icon: <TeamOutlined />,
-          },
+          ...(auth.user.role === "admin"
+            ? [
+                {
+                  label: <Link to="/user">Users</Link>,
+                  key: "user",
+                  icon: <TeamOutlined />,
+                },
+              ]
+            : []),
           {
             label: <Link to="/products">Products</Link>,
             key: "products",
@@ -46,6 +50,7 @@ const Header = () => {
                   <span
                     onClick={() => {
                       localStorage.removeItem("access_token");
+                      localStorage.removeItem("refresh_token");
                       setAuth({
                         isAuthenticated: false,
                         user: {

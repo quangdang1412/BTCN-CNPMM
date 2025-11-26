@@ -1,13 +1,49 @@
 import { Product } from "../config/configdb.js";
+import { Op } from "sequelize";
 
 export const getProductsByCategoryService = async (
   category,
   page = 1,
-  limit = 10
+  limit = 10,
+  search = "",
+  minPrice,
+  maxPrice
 ) => {
   try {
     const offset = (page - 1) * limit;
-    const whereClause = category ? { category } : {};
+    const whereClause = {};
+
+    if (category) {
+      whereClause.category = category;
+    }
+
+    if (search) {
+      const searchTerms = search.split(" ").filter((term) => term.length > 0);
+      const searchConditions = [];
+
+      searchTerms.forEach((term) => {
+        searchConditions.push(
+          { name: { [Op.iLike]: `%${term}%` } },
+          { description: { [Op.iLike]: `%${term}%` } }
+        );
+      });
+
+      whereClause[Op.or] = searchConditions;
+    }
+
+    if (minPrice !== undefined && minPrice !== null && minPrice !== "") {
+      whereClause.price = {
+        ...whereClause.price,
+        [Op.gte]: parseFloat(minPrice),
+      };
+    }
+
+    if (maxPrice !== undefined && maxPrice !== null && maxPrice !== "") {
+      whereClause.price = {
+        ...whereClause.price,
+        [Op.lte]: parseFloat(maxPrice),
+      };
+    }
 
     const { count, rows } = await Product.findAndCountAll({
       where: whereClause,

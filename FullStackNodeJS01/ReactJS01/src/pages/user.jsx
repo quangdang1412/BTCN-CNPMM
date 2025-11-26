@@ -1,8 +1,10 @@
 import { notification, Table } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getUserApi } from "../util/api";
+import { AuthContext } from "../components/context/auth.context";
 
 const UserPage = () => {
+  const { auth } = useContext(AuthContext);
   const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
@@ -19,6 +21,15 @@ const UserPage = () => {
     };
     fetchUser();
   }, []);
+
+  if (auth.user.role !== "admin") {
+    return (
+      <div style={{ padding: 30 }}>
+        <h2>Access Denied</h2>
+        <p>You do not have permission to view this page.</p>
+      </div>
+    );
+  }
 
   const columns = [
     {

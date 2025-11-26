@@ -52,12 +52,20 @@ export const loginService = async (email, password) => {
         };
 
         const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: process.env.JWT_EXPIRE,
+          expiresIn: process.env.JWT_EXPIRE || "1d",
         });
+        const refresh_token = jwt.sign(
+          payload,
+          process.env.REFRESH_JWT_SECRET || process.env.JWT_SECRET,
+          {
+            expiresIn: process.env.REFRESH_JWT_EXPIRE || "7d",
+          }
+        );
 
         return {
           EC: 0,
           access_token,
+          refresh_token,
           user: {
             email: user.email,
             name: user.name,

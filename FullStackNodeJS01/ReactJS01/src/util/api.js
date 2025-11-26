@@ -26,8 +26,23 @@ const getUserApi = () => {
   return axios.get(URL_API);
 };
 
-const getProductsApi = (category, page = 1, limit = 10) => {
-  const URL_API = `/v1/api/products?category=${category}&page=${page}&limit=${limit}`;
+const getProductsApi = (
+  category,
+  page = 1,
+  limit = 10,
+  search = "",
+  minPrice,
+  maxPrice
+) => {
+  let URL_API = `/v1/api/products?category=${category}&page=${page}&limit=${limit}&search=${encodeURIComponent(
+    search
+  )}`;
+  if (minPrice !== undefined && minPrice !== null && minPrice !== "") {
+    URL_API += `&minPrice=${minPrice}`;
+  }
+  if (maxPrice !== undefined && maxPrice !== null && maxPrice !== "") {
+    URL_API += `&maxPrice=${maxPrice}`;
+  }
   return axios.get(URL_API);
 };
 

@@ -27,6 +27,7 @@ const LoginPage = () => {
 
       if (res && res.EC == 0) {
         localStorage.setItem("access_token", res.access_token);
+        localStorage.setItem("refresh_token", res.refresh_token);
         notification.success({
           message: "Đăng nhập thành công",
           description: "Thành công",
