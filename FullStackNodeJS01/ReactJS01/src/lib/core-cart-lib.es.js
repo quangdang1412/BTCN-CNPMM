@@ -812,7 +812,7 @@ const v = ({
                     "text-2xl font-bold text-gray-800 mb-6 flex items-center",
                   children: [
                     /* @__PURE__ */ r.jsx("svg", {
-                      className: "w-7 h-7 mr-3 text-blue-600",
+                      className: "w-5 h-5 mr-3 text-indigo-600",
                       fill: "none",
                       stroke: "currentColor",
                       viewBox: "0 0 24 24",
@@ -829,20 +829,7 @@ const v = ({
                 /* @__PURE__ */ r.jsxs("div", {
                   className: "space-y-4",
                   children: [
-                    /* @__PURE__ */ r.jsxs("div", {
-                      className:
-                        "flex justify-between items-center py-3 border-b border-gray-200",
-                      children: [
-                        /* @__PURE__ */ r.jsx("span", {
-                          className: "text-lg text-gray-600",
-                          children: "Tổng tiền hàng:",
-                        }),
-                        /* @__PURE__ */ r.jsxs("span", {
-                          className: "text-2xl font-bold text-gray-900",
-                          children: [t.totalAmount.toLocaleString(), "₫"],
-                        }),
-                      ],
-                    }),
+                    
                     t.selectedTotalAmount > 0 &&
                       /* @__PURE__ */ r.jsx("div", {
                         className:
@@ -888,7 +875,7 @@ const v = ({
                         "w-full shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg py-4 mt-6",
                       children: [
                         /* @__PURE__ */ r.jsx("svg", {
-                          className: "w-6 h-6 mr-2 inline",
+                          className: "w-5 h-5 mr-2 inline",
                           fill: "none",
                           stroke: "currentColor",
                           viewBox: "0 0 24 24",

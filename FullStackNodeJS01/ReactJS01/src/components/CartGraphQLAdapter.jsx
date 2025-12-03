@@ -28,6 +28,9 @@ import {
   CheckCircleOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
+import { ShoppingCart } from "../lib/core-cart-lib.es";
+import "../lib/core-cart-lib.css";
+
 import {
   getCartGraphQL,
   updateCartItemGraphQL,
@@ -127,23 +130,47 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
   // Handle edit/update quantity
   const handleEditItem = async (itemId, newQuantity) => {
     console.log("📝 handleEditItem called:", { itemId, newQuantity });
+    if (newQuantity < 1) {
+      message.warning("Số lượng phải lớn hơn 0");
+      return;
+    }
     try {
+      // Optimistic update
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === itemId.toString()
+            ? {
+                ...item,
+                quantity: newQuantity,
+                subtotal: item.price * newQuantity,
+              }
+            : item
+        )
+      );
+
       await updateCartItemGraphQL(parseInt(itemId), newQuantity);
       message.success("Đã cập nhật số lượng!");
-      fetchCart();
+      await fetchCart(); // Reload to get accurate data from server
     } catch (error) {
       message.error("Lỗi khi cập nhật: " + error.message);
+      await fetchCart(); // Revert on error
     }
   };
 
   // Handle delete item
   const handleDeleteItem = async (itemId) => {
     try {
+      // Optimistic update
+      setCartItems((prev) =>
+        prev.filter((item) => item.id !== itemId.toString())
+      );
+
       await removeFromCartGraphQL(parseInt(itemId));
       message.success("Đã xóa sản phẩm!");
-      fetchCart();
+      await fetchCart(); // Reload to confirm
     } catch (error) {
       message.error("Lỗi khi xóa: " + error.message);
+      await fetchCart(); // Revert on error
     }
   };
 
@@ -157,22 +184,36 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
       );
       const newSelectedState = !currentItem?.selected;
 
+      // Optimistic update
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.id === itemId.toString()
+            ? { ...item, selected: newSelectedState }
+            : item
+        )
+      );
+
       await toggleSelectCartItemGraphQL(parseInt(itemId), newSelectedState);
-      fetchCart();
+      await fetchCart(); // Reload to confirm
     } catch (error) {
       message.error("Lỗi: " + error.message);
+      await fetchCart(); // Revert on error
     }
   };
 
   // Handle select all
   const handleSelectAll = async (selected) => {
     try {
+      // Optimistic update
+      setCartItems((prev) => prev.map((item) => ({ ...item, selected })));
+
       const cartIds = cartItems.map((item) => parseInt(item.id));
       await selectMultipleCartItemsGraphQL(cartIds, selected);
       message.success(selected ? "Đã chọn tất cả!" : "Đã bỏ chọn tất cả!");
-      fetchCart();
+      await fetchCart(); // Reload to confirm
     } catch (error) {
       message.error("Lỗi: " + error.message);
+      await fetchCart(); // Revert on error
     }
   };
 
@@ -197,7 +238,7 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
         message.success("Đặt hàng thành công!");
         setCheckoutModalVisible(false);
         form.resetFields();
-        fetchCart();
+        await fetchCart(); // Reload cart after checkout
       }
     } catch (error) {
       message.error("Lỗi khi đặt hàng: " + error.message);
@@ -210,11 +251,15 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
       content: "Bạn có chắc muốn xóa toàn bộ giỏ hàng?",
       onOk: async () => {
         try {
+          // Optimistic update
+          setCartItems([]);
+
           await clearCartGraphQL();
           message.success("Đã xóa toàn bộ giỏ hàng!");
-          fetchCart();
+          await fetchCart(); // Reload to confirm
         } catch (error) {
           message.error("Lỗi: " + error.message);
+          await fetchCart(); // Revert on error
         }
       },
     });
@@ -294,7 +339,7 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
                 Đã chọn {selectedItems.length} sản phẩm
               </div>
               <div style={{ fontSize: "28px", fontWeight: "bold" }}>
-                ${selectedTotalAmount.toFixed(2)}
+                {selectedTotalAmount.toLocaleString("vi-VN")}₫
               </div>
             </div>
             <Button
@@ -387,7 +432,7 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
                   color: "#52c41a",
                 }}
               >
-                ${selectedTotalAmount.toFixed(2)}
+                {selectedTotalAmount.toLocaleString("vi-VN")}₫
               </div>
             </div>
           </div>
