@@ -85,3 +85,51 @@ export const createProductService = async (
     return null;
   }
 };
+
+export const updateProductService = async (
+  productId,
+  name,
+  description,
+  price,
+  category,
+  image
+) => {
+  try {
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return null;
+    }
+
+    const updateData = {
+      name,
+      description,
+      price,
+      category,
+    };
+
+    if (image) {
+      updateData.image = image;
+    }
+
+    await product.update(updateData);
+    return product;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const deleteProductService = async (productId) => {
+  try {
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return null;
+    }
+
+    await product.destroy();
+    return { success: true, message: "Product deleted successfully" };
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};

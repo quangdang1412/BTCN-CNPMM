@@ -10,6 +10,7 @@ import {
   Tag,
   Space,
   Statistic,
+  message,
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -22,15 +23,14 @@ import {
   GiftOutlined,
   TrophyOutlined,
 } from "@ant-design/icons";
-import { getProductsApi } from "../util/api";
-import { ShoppingCart } from "../lib/core-cart-lib.es.js";
-import "../lib/cart-styles.css";
+import { getProductsApi, addToCartGraphQL } from "../util/api";
 
 const { Title, Text, Paragraph } = Typography;
 
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [addingToCart, setAddingToCart] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const HomePage = () => {
   const fetchFeaturedProducts = async () => {
     setLoading(true);
     try {
-      const res = await getProductsApi("", 1, 8);
+      const res = await getProductsApi("", 1, 20);
       if (res && res.products) {
         setFeaturedProducts(res.products);
       }
@@ -48,6 +48,18 @@ const HomePage = () => {
       console.error("Error fetching products:", error);
     }
     setLoading(false);
+  };
+
+  const handleAddToCart = async (productId) => {
+    setAddingToCart((prev) => ({ ...prev, [productId]: true }));
+    try {
+      await addToCartGraphQL(productId, 1);
+      message.success("Đã thêm vào giỏ hàng!");
+    } catch (error) {
+      message.error("Lỗi khi thêm vào giỏ hàng: " + error.message);
+    } finally {
+      setAddingToCart((prev) => ({ ...prev, [productId]: false }));
+    }
   };
 
   const categories = [
@@ -281,170 +293,161 @@ const HomePage = () => {
         </Card>
       </div>
 
-      {/* Featured Products & Shopping Cart */}
+      {/* Featured Products */}
       <div
         style={{
-          maxWidth: "1400px",
+          maxWidth: "1200px",
           margin: "0 auto",
           padding: "40px 20px",
         }}
       >
-        <Row gutter={[32, 32]}>
-          {/* Products Section - Left Side */}
-          <Col xs={24} lg={16}>
-            <div style={{ textAlign: "center", marginBottom: "50px" }}>
+        {/* Products Section - Full Width */}
+        <div style={{ marginBottom: "30px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <div>
               <Title
                 level={2}
                 style={{
                   color: "#1890ff",
-                  fontSize: "2.5rem",
-                  marginBottom: "10px",
+                  fontSize: "2rem",
+                  marginBottom: "5px",
                 }}
               >
                 <RocketOutlined style={{ marginRight: "10px" }} />
-                Sản Phẩm Nổi Bật
+                Danh Sách Sản Phẩm
               </Title>
-              <Text style={{ fontSize: "1.1rem", color: "#666" }}>
-                Những sản phẩm được yêu thích nhất
+              <Text style={{ fontSize: "1rem", color: "#666" }}>
+                {featuredProducts.length} sản phẩm có sẵn
               </Text>
             </div>
+            <Button
+              type="primary"
+              onClick={fetchFeaturedProducts}
+              loading={loading}
+              size="large"
+            >
+              Làm mới
+            </Button>
+          </div>
+        </div>
 
-            <Row gutter={[24, 24]}>
-              {featuredProducts.slice(0, 4).map((product) => (
-                <Col xs={24} sm={12} md={12} key={product.id}>
-                  <Card
-                    hoverable
-                    loading={loading}
+        <Row gutter={[24, 24]}>
+          {featuredProducts.map((product) => (
+            <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
+              <Card
+                hoverable
+                loading={loading}
+                style={{
+                  borderRadius: "15px",
+                  overflow: "hidden",
+                  boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+                  border: "1px solid #f0f0f0",
+                  height: "100%",
+                }}
+                bodyStyle={{ padding: "20px" }}
+                cover={
+                  <div
                     style={{
-                      borderRadius: "15px",
+                      height: "220px",
                       overflow: "hidden",
-                      boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-                      border: "1px solid #f0f0f0",
-                      height: "100%",
+                      position: "relative",
+                      background: "#f5f5f5",
                     }}
-                    bodyStyle={{ padding: "20px" }}
-                    cover={
+                  >
+                    <img
+                      alt={product.name}
+                      src={
+                        product.image ||
+                        "https://via.placeholder.com/300x220?text=Product"
+                      }
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <Tag
+                      icon={<FireOutlined />}
+                      color="red"
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        fontSize: "0.9rem",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      HOT
+                    </Tag>
+                  </div>
+                }
+              >
+                <Card.Meta
+                  title={
+                    <div
+                      style={{
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                        color: "#333",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      {product.name}
+                    </div>
+                  }
+                  description={
+                    <div>
+                      <Tag color="blue" style={{ marginBottom: "10px" }}>
+                        {product.category}
+                      </Tag>
                       <div
                         style={{
-                          height: "220px",
-                          overflow: "hidden",
-                          position: "relative",
-                          background: "#f5f5f5",
+                          fontSize: "1.3rem",
+                          fontWeight: "bold",
+                          color: "#52c41a",
+                          marginTop: "10px",
                         }}
                       >
-                        <img
-                          alt={product.name}
-                          src={
-                            product.image ||
-                            "https://via.placeholder.com/300x220?text=Product"
-                          }
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                        <Tag
-                          icon={<FireOutlined />}
-                          color="red"
-                          style={{
-                            position: "absolute",
-                            top: "10px",
-                            right: "10px",
-                            fontSize: "0.9rem",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          HOT
-                        </Tag>
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(product.price)}
                       </div>
-                    }
-                  >
-                    <Card.Meta
-                      title={
-                        <div
-                          style={{
-                            fontSize: "1.1rem",
-                            fontWeight: "bold",
-                            color: "#333",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          {product.name}
-                        </div>
-                      }
-                      description={
-                        <div>
-                          <Tag color="blue" style={{ marginBottom: "10px" }}>
-                            {product.category}
-                          </Tag>
-                          <div
-                            style={{
-                              fontSize: "1.3rem",
-                              fontWeight: "bold",
-                              color: "#52c41a",
-                              marginTop: "10px",
-                            }}
-                          >
-                            ${product.price}
-                          </div>
-                          <Button
-                            type="primary"
-                            icon={<ShoppingCartOutlined />}
-                            style={{
-                              width: "100%",
-                              marginTop: "15px",
-                              borderRadius: "8px",
-                              height: "40px",
-                              fontWeight: "bold",
-                            }}
-                            onClick={() => navigate("/products")}
-                          >
-                            Thêm vào giỏ
-                          </Button>
-                        </div>
-                      }
-                    />
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-
-            <div style={{ textAlign: "center", marginTop: "40px" }}>
-              <Button
-                type="primary"
-                size="large"
-                onClick={() => navigate("/products")}
-                style={{
-                  height: "50px",
-                  fontSize: "1.1rem",
-                  borderRadius: "25px",
-                  padding: "0 50px",
-                  fontWeight: "bold",
-                  boxShadow: "0 4px 15px rgba(24, 144, 255, 0.3)",
-                }}
-              >
-                Xem Tất Cả Sản Phẩm
-              </Button>
-            </div>
-          </Col>
-
-          {/* Shopping Cart Section - Right Side */}
-          <Col xs={24} lg={8}>
-            <div
-              style={{
-                position: "sticky",
-                top: "20px",
-                background: "white",
-                borderRadius: "15px",
-                padding: "20px",
-                boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-              }}
-            >
-              <ShoppingCart />
-            </div>
-          </Col>
+                      <Button
+                        type="primary"
+                        icon={<ShoppingCartOutlined />}
+                        loading={addingToCart[product.id]}
+                        style={{
+                          width: "100%",
+                          marginTop: "15px",
+                          borderRadius: "8px",
+                          height: "40px",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => handleAddToCart(product.id)}
+                      >
+                        Thêm vào giỏ
+                      </Button>
+                    </div>
+                  }
+                />
+              </Card>
+            </Col>
+          ))}
         </Row>
+
+        {featuredProducts.length === 0 && !loading && (
+          <div style={{ textAlign: "center", padding: "40px", color: "#999" }}>
+            Không có sản phẩm nào
+          </div>
+        )}
       </div>
 
       {/* Features Section */}

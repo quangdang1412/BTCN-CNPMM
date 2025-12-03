@@ -16,6 +16,7 @@ const auth = async (req, res, next) => {
         const user = await User.findOne({ where: { email: decoded.email } });
         if (user) {
           req.user = {
+            id: user.id,
             email: user.email,
             name: user.name,
             role: user.role,

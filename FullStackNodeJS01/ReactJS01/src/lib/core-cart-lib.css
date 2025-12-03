@@ -1,0 +1,800 @@
+/* Shopping Cart Library Styles */
+
+/* Reset and Base */
+* {
+  box-sizing: border-box;
+}
+
+/* CSS Variables */
+:root {
+  --cart-primary: #3b82f6;
+  --cart-primary-dark: #2563eb;
+  --cart-success: #10b981;
+  --cart-danger: #ef4444;
+  --cart-warning: #f59e0b;
+  --cart-text: #1f2937;
+  --cart-text-light: #6b7280;
+  --cart-border: #e5e7eb;
+  --cart-bg: #ffffff;
+  --cart-bg-secondary: #f9fafb;
+  --cart-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --cart-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or
+    ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
+    *,
+    :before,
+    :after,
+    ::backdrop {
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
+      --tw-border-style: solid;
+      --tw-duration: initial;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-scale-z: 1;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+    }
+  }
+}
+
+/* Shopping Cart Specific Styles */
+.shopping-cart {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  color: var(--cart-text);
+}
+
+/* Cart Header */
+.shopping-cart .bg-gradient-to-r {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--cart-shadow-lg);
+}
+
+/* Cart Items Container */
+.shopping-cart .space-y-4 > * + * {
+  margin-top: 16px;
+}
+
+/* Cart Item Card */
+.shopping-cart .bg-white {
+  background-color: var(--cart-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--cart-shadow);
+  border: 1px solid var(--cart-border);
+  transition: all 0.3s ease;
+}
+
+.shopping-cart .bg-white:hover {
+  box-shadow: var(--cart-shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Product Image */
+.shopping-cart img {
+  width: 128px;
+  height: 128px;
+  border-radius: 8px;
+  object-fit: cover;
+  background-color: var(--cart-bg-secondary);
+  display: block;
+}
+
+/* Default image fallback */
+.shopping-cart img[src=""],
+.shopping-cart img:not([src]),
+.shopping-cart img[src*="undefined"],
+.shopping-cart img[src*="null"] {
+  content: url("/default-product.png");
+}
+
+/* Image error handling */
+.shopping-cart img::before {
+  content: "";
+  display: block;
+  width: 128px;
+  height: 128px;
+  background-color: var(--cart-bg-secondary);
+  border-radius: 8px;
+}
+
+.shopping-cart img::after {
+  content: "📦";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  opacity: 0.3;
+}
+
+/* Text Styles */
+.shopping-cart .text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.shopping-cart .text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.shopping-cart .text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.shopping-cart .text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.shopping-cart .font-bold {
+  font-weight: 700;
+}
+
+.shopping-cart .font-semibold {
+  font-weight: 600;
+}
+
+.shopping-cart .font-medium {
+  font-weight: 500;
+}
+/* Color Classes */
+.shopping-cart .text-gray-600 {
+  color: var(--cart-text-light);
+}
+
+.shopping-cart .text-gray-800 {
+  color: var(--cart-text);
+}
+
+.shopping-cart .text-blue-600 {
+  color: var(--cart-primary);
+}
+
+.shopping-cart .text-blue-100 {
+  color: #dbeafe;
+}
+
+.shopping-cart .text-green-600 {
+  color: var(--cart-success);
+}
+
+.shopping-cart .text-red-600 {
+  color: var(--cart-danger);
+}
+
+/* Background Colors */
+.shopping-cart .bg-gray-50 {
+  background-color: var(--cart-bg-secondary);
+}
+
+.shopping-cart .bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+.shopping-cart .bg-blue-500 {
+  background-color: var(--cart-primary);
+}
+
+.shopping-cart .bg-blue-600 {
+  background-color: var(--cart-primary-dark);
+}
+
+.shopping-cart .bg-green-500 {
+  background-color: var(--cart-success);
+}
+
+.shopping-cart .bg-red-500 {
+  background-color: var(--cart-danger);
+}
+
+/* Utility Classes */
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+.fixed {
+  position: fixed;
+}
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.z-50 {
+  z-index: 50;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+.mb-8 {
+  margin-bottom: 2rem;
+}
+.mt-1 {
+  margin-top: 0.25rem;
+}
+.mt-3 {
+  margin-top: 0.75rem;
+}
+.mr-2 {
+  margin-right: 0.5rem;
+}
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.pt-2 {
+  padding-top: 0.5rem;
+}
+.pt-5 {
+  padding-top: 1.25rem;
+}
+.pb-4 {
+  padding-bottom: 1rem;
+}
+.max-w-6xl {
+  max-width: 72rem;
+}
+.max-w-lg {
+  max-width: 32rem;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.block {
+  display: block;
+}
+.flex {
+  display: flex;
+}
+.inline {
+  display: inline;
+}
+.inline-block {
+  display: inline-block;
+}
+.inline-flex {
+  display: inline-flex;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+.h-8 {
+  height: 2rem;
+}
+.h-12 {
+  height: 3rem;
+}
+.h-16 {
+  height: 4rem;
+}
+.w-5 {
+  width: 1.25rem;
+}
+.w-8 {
+  width: 2rem;
+}
+.w-12 {
+  width: 3rem;
+}
+.w-16 {
+  width: 4rem;
+}
+.w-full {
+  width: 100%;
+}
+.min-w-0 {
+  min-width: 0;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.flex-col {
+  flex-direction: column;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-center {
+  align-items: center;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-3 {
+  gap: 0.75rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+.gap-6 {
+  gap: 1.5rem;
+}
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
+.rounded {
+  border-radius: 0.25rem;
+}
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.border {
+  border-width: 1px;
+  border-style: solid;
+}
+.border-2 {
+  border-width: 2px;
+  border-style: solid;
+}
+.border-b {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+.border-gray-300 {
+  border-color: #d1d5db;
+}
+.border-transparent {
+  border-color: transparent;
+}
+.bg-gray-500 {
+  background-color: #6b7280;
+}
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+.object-cover {
+  object-fit: cover;
+}
+.p-4 {
+  padding: 1rem;
+}
+.p-6 {
+  padding: 1.5rem;
+}
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.align-middle {
+  vertical-align: middle;
+}
+.align-bottom {
+  vertical-align: bottom;
+}
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+.opacity-50 {
+  opacity: 0.5;
+}
+.opacity-75 {
+  opacity: 0.75;
+}
+.shadow {
+  box-shadow: var(--cart-shadow);
+}
+.shadow-lg {
+  box-shadow: var(--cart-shadow-lg);
+}
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-colors {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+/* Hover Effects */
+@media (hover: hover) {
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+  .hover\:bg-blue-700:hover {
+    background-color: #1d4ed8;
+  }
+  .hover\:bg-red-700:hover {
+    background-color: #b91c1c;
+  }
+  .hover\:shadow-xl:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* Focus Effects */
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
+    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
+    calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
+    var(--tw-shadow, 0 0 #0000);
+}
+.focus\:ring-offset-2:focus {
+  --tw-ring-offset-width: 2px;
+}
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: #3b82f6;
+}
+
+/* Responsive Utilities */
+@media (min-width: 640px) {
+  .sm\:flex {
+    display: flex;
+  }
+  .sm\:items-start {
+    align-items: flex-start;
+  }
+  .sm\:my-8 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .sm\:mt-0 {
+    margin-top: 0;
+  }
+  .sm\:w-full {
+    width: 100%;
+  }
+  .sm\:max-w-lg {
+    max-width: 32rem;
+  }
+  .sm\:align-middle {
+    vertical-align: middle;
+  }
+  .sm\:p-6 {
+    padding: 1.5rem;
+  }
+  .sm\:pb-4 {
+    padding-bottom: 1rem;
+  }
+  .sm\:text-left {
+    text-align: left;
+  }
+}
+
+/* Button Styles */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Custom Shopping Cart Buttons */
+.shopping-cart button.bg-blue-500,
+.shopping-cart button.bg-blue-600 {
+  background-color: var(--cart-primary);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.shopping-cart button.bg-blue-500:hover,
+.shopping-cart button.bg-blue-600:hover {
+  background-color: var(--cart-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--cart-shadow-lg);
+}
+
+.shopping-cart button.bg-red-500 {
+  background-color: var(--cart-danger);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.shopping-cart button.bg-red-500:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.shopping-cart button.bg-green-500 {
+  background-color: var(--cart-success);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.shopping-cart button.bg-green-500:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+/* Input Number Styles */
+input[type="number"] {
+  border: 1px solid var(--cart-border);
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  width: 4rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--cart-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Checkbox Styles */
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--cart-border);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  accent-color: var(--cart-primary);
+}
+
+/* Empty State */
+.shopping-cart .text-center svg {
+  margin: 0 auto 1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shopping-cart .bg-white {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Property definitions */
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-duration {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-scale-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-scale-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-scale-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}

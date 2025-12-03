@@ -22,7 +22,7 @@ const UserPage = () => {
     fetchUser();
   }, []);
 
-  if (auth.user.role !== "admin") {
+  if (auth.user.role !== "Admin") {
     return (
       <div style={{ padding: 30 }}>
         <h2>Access Denied</h2>
