@@ -6,7 +6,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon ./src/server.js",
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon ./src/server.js",
+    "sync-products": "node ./src/syncProducts.js"
   },
   "keywords": [
     "nodejs",
@@ -33,6 +34,7 @@
     "graphql": "^16.12.0",
     "graphql-http": "^1.22.4",
     "jsonwebtoken": "^9.0.2",
+    "meilisearch": "^0.54.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.15.3",

@@ -1,5 +1,9 @@
 import { Product } from "../config/configdb.js";
-import { Op } from "sequelize";
+import {
+  syncProductToMeili,
+  deleteProductFromMeili,
+  searchProductsInMeili,
+} from "../config/meilisearch.js";
 
 export const getProductsByCategoryService = async (
   category,
@@ -10,54 +14,23 @@ export const getProductsByCategoryService = async (
   maxPrice
 ) => {
   try {
-    const offset = (page - 1) * limit;
-    const whereClause = {};
-
-    if (category) {
-      whereClause.category = category;
-    }
-
-    if (search) {
-      const searchTerms = search.split(" ").filter((term) => term.length > 0);
-      const searchConditions = [];
-
-      searchTerms.forEach((term) => {
-        searchConditions.push(
-          { name: { [Op.iLike]: `%${term}%` } },
-          { description: { [Op.iLike]: `%${term}%` } }
-        );
-      });
-
-      whereClause[Op.or] = searchConditions;
-    }
-
-    if (minPrice !== undefined && minPrice !== null && minPrice !== "") {
-      whereClause.price = {
-        ...whereClause.price,
-        [Op.gte]: parseFloat(minPrice),
-      };
-    }
-
-    if (maxPrice !== undefined && maxPrice !== null && maxPrice !== "") {
-      whereClause.price = {
-        ...whereClause.price,
-        [Op.lte]: parseFloat(maxPrice),
-      };
-    }
-
-    const { count, rows } = await Product.findAndCountAll({
-      where: whereClause,
-      limit,
-      offset,
-      order: [["createdAt", "DESC"]],
-    });
-
-    return {
-      products: rows,
-      total: count,
+    // Use MeiliSearch for search
+    const result = await searchProductsInMeili(
+      search,
+      category,
+      minPrice,
+      maxPrice,
       page,
-      totalPages: Math.ceil(count / limit),
-    };
+      limit
+    );
+
+    if (result) {
+      return result;
+    }
+
+    // Fallback to database if MeiliSearch fails
+    console.log("MeiliSearch failed, falling back to database");
+    return null;
   } catch (error) {
     console.log(error);
     return null;
@@ -79,6 +52,9 @@ export const createProductService = async (
       category,
       image,
     });
+
+    await syncProductToMeili(product);
+
     return product;
   } catch (error) {
     console.log(error);
@@ -112,6 +88,9 @@ export const updateProductService = async (
     }
 
     await product.update(updateData);
+
+    await syncProductToMeili(product);
+
     return product;
   } catch (error) {
     console.log(error);
@@ -127,6 +106,9 @@ export const deleteProductService = async (productId) => {
     }
 
     await product.destroy();
+
+    await deleteProductFromMeili(productId);
+
     return { success: true, message: "Product deleted successfully" };
   } catch (error) {
     console.log(error);
