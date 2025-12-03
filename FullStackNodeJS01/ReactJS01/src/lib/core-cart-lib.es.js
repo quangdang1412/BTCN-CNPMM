@@ -829,7 +829,6 @@ const v = ({
                 /* @__PURE__ */ r.jsxs("div", {
                   className: "space-y-4",
                   children: [
-                    
                     t.selectedTotalAmount > 0 &&
                       /* @__PURE__ */ r.jsx("div", {
                         className:
