@@ -32,12 +32,6 @@ function App() {
     fetchAccount();
   }, [setAuth, setAppLoading]);
 
-  useEffect(() => {
-    if (!appLoading && !auth.isAuthenticated) {
-      navigate("/login");
-    }
-  }, [appLoading, auth.isAuthenticated, navigate]);
-
   return (
     <div>
       {appLoading === true ? (

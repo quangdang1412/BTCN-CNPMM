@@ -5,7 +5,7 @@ import React, {
   useRef,
   useCallback,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Card,
   Col,
@@ -38,18 +38,23 @@ const { TextArea } = Input;
 const { Title, Text } = Typography;
 
 const ProductsPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const pageRef = useRef(1);
-  const [category, setCategory] = useState("");
-  const [search, setSearch] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [category, setCategory] = useState(searchParams.get("category") || "");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get("search") || ""
+  );
+  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { auth } = useContext(AuthContext);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const debounceRef = useRef(null);
 
   const fetchProducts = useCallback(
     async (
@@ -88,8 +93,17 @@ const ProductsPage = () => {
 
   useEffect(() => {
     pageRef.current = 1;
+
+    // Update URL params
+    const params = {};
+    if (category) params.category = category;
+    if (search) params.search = search;
+    if (minPrice) params.minPrice = minPrice;
+    if (maxPrice) params.maxPrice = maxPrice;
+    setSearchParams(params);
+
     fetchProducts(1, category, search, minPrice, maxPrice, false);
-  }, [category, search, minPrice, maxPrice, fetchProducts]);
+  }, [category, search, minPrice, maxPrice, fetchProducts, setSearchParams]);
 
   useEffect(() => {
     if (!auth.isAuthenticated) {
@@ -110,7 +124,17 @@ const ProductsPage = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+    const value = e.target.value;
+    setSearchInput(value);
+
+    // Debounce search - wait 500ms after user stops typing
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setSearch(value);
+    }, 500);
   };
 
   const handleMinPriceChange = (value) => {
@@ -211,9 +235,13 @@ const ProductsPage = () => {
               </div>
               <Input
                 placeholder="Nhập tên sản phẩm..."
-                value={search}
+                value={searchInput}
                 onChange={handleSearchChange}
                 allowClear
+                onClear={() => {
+                  setSearchInput("");
+                  setSearch("");
+                }}
                 style={{
                   borderRadius: "10px",
                   border: "2px solid #d9d9d9",
@@ -243,6 +271,7 @@ const ProductsPage = () => {
                   borderRadius: "10px",
                   border: "2px solid #d9d9d9",
                 }}
+                value={category || undefined}
                 onChange={handleCategoryChange}
                 allowClear
               >
@@ -276,9 +305,9 @@ const ProductsPage = () => {
                 value={minPrice}
                 onChange={handleMinPriceChange}
                 formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ₫"
                 }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                parser={(value) => value.replace(/₫|\s|(,*)/g, "")}
               />
             </Col>
             <Col xs={24} sm={8} md={5}>
@@ -305,9 +334,9 @@ const ProductsPage = () => {
                 value={maxPrice}
                 onChange={handleMaxPriceChange}
                 formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ₫"
                 }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                parser={(value) => value.replace(/₫|\s|(,*)/g, "")}
               />
             </Col>
             {auth.user.role === "Admin" && (
@@ -460,8 +489,10 @@ const ProductsPage = () => {
                               color: "#52c41a",
                             }}
                           >
-                            <DollarOutlined style={{ marginRight: "5px" }} />$
-                            {product.price}
+                            {new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(product.price)}
                           </div>
                           <div
                             style={{
@@ -563,13 +594,13 @@ const ProductsPage = () => {
                 >
                   <InputNumber
                     min={0}
-                    step={0.01}
+                    step={1000}
                     style={{ width: "100%" }}
                     placeholder="Nhập giá"
                     formatter={(value) =>
-                      `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ₫"
                     }
-                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    parser={(value) => value.replace(/₫|\s|(,*)/g, "")}
                   />
                 </Form.Item>
               </Col>

@@ -1,4 +1,4 @@
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { useContext } from "react";
 import { AuthContext } from "../../components/context/auth.context";
@@ -14,14 +14,9 @@ import {
 const { Sider, Content } = Layout;
 
 const AdminLayout = () => {
-  const { auth, setAuth } = useContext(AuthContext);
+  const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Check if user is admin
-  if (!auth.isAuthenticated || auth.user.role !== "Admin") {
-    return <Navigate to="/" replace />;
-  }
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");

@@ -15,6 +15,7 @@ import AdminDashboardPage from "./pages/admin/dashboard.jsx";
 import AdminUsersPage from "./pages/admin/users.jsx";
 import AdminProductsPage from "./pages/admin/products.jsx";
 import { AuthWrapper } from "./components/context/auth.context.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -41,7 +42,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute requireAdmin={true}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,

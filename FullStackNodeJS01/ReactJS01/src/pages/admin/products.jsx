@@ -81,19 +81,36 @@ const AdminProductsPage = () => {
 
       if (editingProduct) {
         // Update existing product
-        await updateProductApi(editingProduct.id, productData);
+        const updatedProduct = await updateProductApi(
+          editingProduct.id,
+          productData
+        );
         message.success("Cập nhật sản phẩm thành công!");
+
+        // Update local state immediately
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p.id === editingProduct.id ? { ...p, ...updatedProduct } : p
+          )
+        );
       } else {
         // Create new product
-        await createProductApi(productData);
+        const newProduct = await createProductApi(productData);
         message.success("Tạo sản phẩm thành công!");
+
+        // Add to local state immediately
+        setProducts((prevProducts) => [newProduct, ...prevProducts]);
       }
 
       setModalVisible(false);
       setEditingProduct(null);
       form.resetFields();
       setFileList([]);
-      fetchProducts();
+
+      // Refresh from server to ensure sync
+      setTimeout(() => {
+        fetchProducts();
+      }, 500);
     } catch (error) {
       message.error(
         `Lỗi khi ${editingProduct ? "cập nhật" : "tạo"} sản phẩm: ${
@@ -196,13 +213,31 @@ const AdminProductsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteProductApi(id);
-      message.success("Xóa sản phẩm thành công!");
-      fetchProducts();
-    } catch (error) {
-      message.error("Lỗi khi xóa sản phẩm: " + error.message);
-    }
+    Modal.confirm({
+      title: "Xác nhận xóa",
+      content: "Bạn có chắc chắn muốn xóa sản phẩm này?",
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          await deleteProductApi(id);
+          message.success("Xóa sản phẩm thành công!");
+
+          // Update local state immediately
+          setProducts((prevProducts) =>
+            prevProducts.filter((p) => p.id !== id)
+          );
+
+          // Refresh from server to ensure sync
+          setTimeout(() => {
+            fetchProducts();
+          }, 500);
+        } catch (error) {
+          message.error("Lỗi khi xóa sản phẩm: " + error.message);
+        }
+      },
+    });
   };
 
   const uploadProps = {
