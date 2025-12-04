@@ -28,7 +28,6 @@ export const getProductsByCategoryService = async (
       return result;
     }
 
-    // Fallback to database if MeiliSearch fails
     console.log("MeiliSearch failed, falling back to database");
     return null;
   } catch (error) {
