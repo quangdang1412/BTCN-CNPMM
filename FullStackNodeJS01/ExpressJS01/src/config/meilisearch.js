@@ -20,6 +20,16 @@ const initProductsIndex = async () => {
 
     await index.updateSortableAttributes(["price", "createdAt"]);
 
+    await index.updateTypoTolerance({
+      enabled: true,
+      minWordSizeForTypos: {
+        oneTypo: 4, // Allow 1 typo for words/numbers with 4+ characters
+        twoTypos: 7, // Allow 2 typos for words/numbers with 7+ characters
+      },
+      disableOnWords: [],
+      disableOnAttributes: [],
+    });
+
     console.log("MeiliSearch products index initialized successfully");
   } catch (error) {
     console.error("Error initializing MeiliSearch index:", error);
@@ -87,6 +97,8 @@ export const searchProductsInMeili = async (
       filter: filterString,
       limit,
       offset,
+      matchingStrategy: "last",
+      rankingScoreThreshold: 0.3,
     });
 
     return {

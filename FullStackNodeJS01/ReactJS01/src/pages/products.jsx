@@ -91,6 +91,20 @@ const ProductsPage = () => {
     []
   );
 
+  // Sync state with URL params when they change
+  useEffect(() => {
+    const urlCategory = searchParams.get("category") || "";
+    const urlSearch = searchParams.get("search") || "";
+    const urlMinPrice = searchParams.get("minPrice") || "";
+    const urlMaxPrice = searchParams.get("maxPrice") || "";
+
+    setCategory(urlCategory);
+    setSearch(urlSearch);
+    setSearchInput(urlSearch);
+    setMinPrice(urlMinPrice);
+    setMaxPrice(urlMaxPrice);
+  }, [searchParams]);
+
   useEffect(() => {
     pageRef.current = 1;
 
