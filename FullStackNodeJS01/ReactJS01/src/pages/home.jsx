@@ -50,7 +50,11 @@ const HomePage = () => {
     setLoading(false);
   };
 
-  const handleAddToCart = async (productId) => {
+  const handleAddToCart = async (productId, event) => {
+    // Prevent card click event
+    if (event) {
+      event.stopPropagation();
+    }
     setAddingToCart((prev) => ({ ...prev, [productId]: true }));
     try {
       await addToCartGraphQL(productId, 1);
@@ -344,12 +348,14 @@ const HomePage = () => {
               <Card
                 hoverable
                 loading={loading}
+                onClick={() => navigate(`/product/${product.id}`)}
                 style={{
                   borderRadius: "15px",
                   overflow: "hidden",
                   boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
                   border: "1px solid #f0f0f0",
                   height: "100%",
+                  cursor: "pointer",
                 }}
                 bodyStyle={{ padding: "20px" }}
                 cover={
@@ -431,7 +437,7 @@ const HomePage = () => {
                           height: "40px",
                           fontWeight: "bold",
                         }}
-                        onClick={() => handleAddToCart(product.id)}
+                        onClick={(e) => handleAddToCart(product.id, e)}
                       >
                         Thêm vào giỏ
                       </Button>
