@@ -1,8 +1,19 @@
 import express from "express";
 import userController from "../controllers/userController.js";
-import productController from "../controllers/productController.js";
+import {
+  getProductsByCategory,
+  uploadImage,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProductDetails,
+  getSimilarProducts,
+  getRecentlyViewed,
+} from "../controllers/productController.js";
 import cartController from "../controllers/cartController.js";
 import orderController from "../controllers/orderController.js";
+import favoriteController from "../controllers/favoriteController.js";
+import commentController from "../controllers/commentController.js";
 import auth from "../middleware/auth.js";
 import authorize from "../middleware/authorize.js";
 import delay from "../middleware/delay.js";
@@ -67,12 +78,15 @@ routerAPI.get("/user", userController.getUser);
 routerAPI.get("/account", delay, userController.getAccount);
 
 // Product routes
-routerAPI.get("/products", productController.getProductsByCategory);
+routerAPI.get("/products", getProductsByCategory);
+routerAPI.get("/products/:productId", getProductDetails);
+routerAPI.get("/products/:productId/similar", getSimilarProducts);
+routerAPI.get("/recently-viewed", getRecentlyViewed);
 routerAPI.post(
   "/upload-image",
   authorize(["Admin"]),
   upload.single("image"),
-  productController.uploadImage
+  uploadImage
 );
 routerAPI.post(
   "/products",
@@ -91,7 +105,7 @@ routerAPI.post(
     }
     next();
   },
-  productController.createProduct
+  createProduct
 );
 routerAPI.put(
   "/products/:productId",
@@ -110,13 +124,70 @@ routerAPI.put(
     }
     next();
   },
-  productController.updateProduct
+  updateProduct
+);
+routerAPI.delete("/products/:productId", authorize(["Admin"]), deleteProduct);
+
+// Favorite routes
+routerAPI.post(
+  "/favorites",
+  [body("productId").isInt().withMessage("Product ID must be an integer")],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  favoriteController.addToFavorites
 );
 routerAPI.delete(
-  "/products/:productId",
-  authorize(["Admin"]),
-  productController.deleteProduct
+  "/favorites/:productId",
+  favoriteController.removeFromFavorites
 );
+routerAPI.get("/favorites", favoriteController.getUserFavorites);
+routerAPI.get(
+  "/favorites/:productId/status",
+  favoriteController.checkFavoriteStatus
+);
+
+// Comment routes
+routerAPI.post(
+  "/comments",
+  [
+    body("productId").isInt().withMessage("Product ID must be an integer"),
+    body("content").notEmpty().withMessage("Content is required"),
+    body("rating")
+      .optional()
+      .isInt({ min: 1, max: 5 })
+      .withMessage("Rating must be between 1 and 5"),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  commentController.addComment
+);
+routerAPI.get(
+  "/products/:productId/comments",
+  commentController.getProductComments
+);
+routerAPI.put(
+  "/comments/:commentId",
+  [body("content").notEmpty().withMessage("Content is required")],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  commentController.updateComment
+);
+routerAPI.delete("/comments/:commentId", commentController.deleteComment);
 
 // Cart routes
 routerAPI.get("/cart", cartController.getCart);

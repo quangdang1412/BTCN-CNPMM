@@ -9,6 +9,8 @@ import UserPage from "./pages/user.jsx";
 import HomePage from "./pages/home.jsx";
 import LoginPage from "./pages/login.jsx";
 import ProductsPage from "./pages/products.jsx";
+import ProductDetailPage from "./pages/productDetail.jsx";
+import FavoritesPage from "./pages/favorites.jsx";
 import CartGraphQLPage from "./pages/cartGraphQL.jsx";
 import AdminLayout from "./components/layout/AdminLayout.jsx";
 import AdminDashboardPage from "./pages/admin/dashboard.jsx";
@@ -33,6 +35,14 @@ const router = createBrowserRouter([
       {
         path: "products",
         element: <ProductsPage />,
+      },
+      {
+        path: "product/:productId",
+        element: <ProductDetailPage />,
+      },
+      {
+        path: "favorites",
+        element: <FavoritesPage />,
       },
       {
         path: "cart",

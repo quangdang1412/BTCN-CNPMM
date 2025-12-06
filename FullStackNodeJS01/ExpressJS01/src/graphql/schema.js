@@ -90,7 +90,7 @@ const OrderType = new GraphQLObjectType({
     notes: { type: GraphQLString },
     createdAt: { type: GraphQLString },
     updatedAt: { type: GraphQLString },
-    OrderItems: { type: new GraphQLList(OrderItemType) },
+    items: { type: new GraphQLList(OrderItemType) },
   }),
 });
 

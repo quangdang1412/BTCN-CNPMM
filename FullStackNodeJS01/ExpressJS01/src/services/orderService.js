@@ -74,14 +74,16 @@ const orderService = {
         include: [
           {
             model: OrderItem,
-            as: "OrderItems",
+            as: "items",
           },
         ],
       });
 
       return completeOrder;
     } catch (error) {
-      await transaction.rollback();
+      if (!transaction.finished) {
+        await transaction.rollback();
+      }
       throw error;
     }
   },
@@ -164,14 +166,16 @@ const orderService = {
         include: [
           {
             model: OrderItem,
-            as: "OrderItems",
+            as: "items",
           },
         ],
       });
 
       return completeOrder;
     } catch (error) {
-      await transaction.rollback();
+      if (!transaction.finished) {
+        await transaction.rollback();
+      }
       throw error;
     }
   },
@@ -253,7 +257,9 @@ const orderService = {
 
       return completeOrder;
     } catch (error) {
-      await transaction.rollback();
+      if (!transaction.finished) {
+        await transaction.rollback();
+      }
       throw error;
     }
   },

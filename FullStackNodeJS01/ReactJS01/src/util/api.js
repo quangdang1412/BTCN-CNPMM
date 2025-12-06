@@ -212,7 +212,7 @@ const checkoutSelectedItemsGraphQL = (shippingAddress, phoneNumber, notes) => {
         phoneNumber
         notes
         createdAt
-        OrderItems {
+        items {
           id
           productId
           productName
@@ -240,7 +240,7 @@ const checkoutCartGraphQL = (shippingAddress, phoneNumber, notes) => {
         status
         shippingAddress
         phoneNumber
-        OrderItems {
+        items {
           productName
           quantity
           price
@@ -250,6 +250,64 @@ const checkoutCartGraphQL = (shippingAddress, phoneNumber, notes) => {
     }
   `;
   return graphqlRequest(query, { shippingAddress, phoneNumber, notes });
+};
+
+// Favorite APIs
+const addToFavoritesApi = (productId) => {
+  const URL_API = "/v1/api/favorites";
+  return axios.post(URL_API, { productId });
+};
+
+const removeFromFavoritesApi = (productId) => {
+  const URL_API = `/v1/api/favorites/${productId}`;
+  return axios.delete(URL_API);
+};
+
+const getUserFavoritesApi = (page = 1, limit = 10) => {
+  const URL_API = `/v1/api/favorites?page=${page}&limit=${limit}`;
+  return axios.get(URL_API);
+};
+
+const checkFavoriteStatusApi = (productId) => {
+  const URL_API = `/v1/api/favorites/${productId}/status`;
+  return axios.get(URL_API);
+};
+
+// Comment APIs
+const addCommentApi = (productId, content, rating = null) => {
+  const URL_API = "/v1/api/comments";
+  return axios.post(URL_API, { productId, content, rating });
+};
+
+const getProductCommentsApi = (productId, page = 1, limit = 10) => {
+  const URL_API = `/v1/api/products/${productId}/comments?page=${page}&limit=${limit}`;
+  return axios.get(URL_API);
+};
+
+const updateCommentApi = (commentId, content, rating = null) => {
+  const URL_API = `/v1/api/comments/${commentId}`;
+  return axios.put(URL_API, { content, rating });
+};
+
+const deleteCommentApi = (commentId) => {
+  const URL_API = `/v1/api/comments/${commentId}`;
+  return axios.delete(URL_API);
+};
+
+// Product Details APIs
+const getProductDetailsApi = (productId) => {
+  const URL_API = `/v1/api/products/${productId}`;
+  return axios.get(URL_API);
+};
+
+const getSimilarProductsApi = (productId, limit = 6) => {
+  const URL_API = `/v1/api/products/${productId}/similar?limit=${limit}`;
+  return axios.get(URL_API);
+};
+
+const getRecentlyViewedApi = (limit = 10) => {
+  const URL_API = `/v1/api/recently-viewed?limit=${limit}`;
+  return axios.get(URL_API);
 };
 
 export {
@@ -272,4 +330,18 @@ export {
   selectMultipleCartItemsGraphQL,
   checkoutSelectedItemsGraphQL,
   checkoutCartGraphQL,
+  // Favorite APIs
+  addToFavoritesApi,
+  removeFromFavoritesApi,
+  getUserFavoritesApi,
+  checkFavoriteStatusApi,
+  // Comment APIs
+  addCommentApi,
+  getProductCommentsApi,
+  updateCommentApi,
+  deleteCommentApi,
+  // Product Details APIs
+  getProductDetailsApi,
+  getSimilarProductsApi,
+  getRecentlyViewedApi,
 };

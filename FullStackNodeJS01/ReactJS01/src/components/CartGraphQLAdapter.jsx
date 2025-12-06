@@ -51,7 +51,7 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
   const fetchCart = useCallback(async () => {
     try {
       const res = await getCartGraphQL();
-      if (res.data && res.data.data && res.data.cart) {
+      if (res && res.data && res.data.cart) {
         const transformedItems = res.data.cart.items.map((item) => ({
           id: item.id.toString(),
           name: item.Product.name,
@@ -234,7 +234,7 @@ const CartGraphQLAdapter = forwardRef((props, ref) => {
         values.phoneNumber,
         values.notes
       );
-      if (res.data && res.data.data) {
+      if (res && res.data && res.data.checkoutSelectedItems) {
         message.success("Đặt hàng thành công!");
         setCheckoutModalVisible(false);
         form.resetFields();

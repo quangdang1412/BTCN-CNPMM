@@ -1,7 +1,6 @@
 import orderService from "../services/orderService.js";
 
 const orderController = {
-  // Create order from cart
   createOrderFromCart: async (req, res) => {
     try {
       const userId = req.user.id;
@@ -41,7 +40,6 @@ const orderController = {
     }
   },
 
-  // Create order directly
   createOrder: async (req, res) => {
     try {
       const userId = req.user.id;

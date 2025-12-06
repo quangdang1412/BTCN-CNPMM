@@ -46,8 +46,8 @@ const ShoppingCartGraphQL = forwardRef((props, ref) => {
     setLoading(true);
     try {
       const res = await getCartGraphQL();
-      if (res.data && res.data.data) {
-        setCart(res.data.data.cart);
+      if (res && res.data && res.data.cart) {
+        setCart(res.data.cart);
       }
     } catch (error) {
       console.error("Lỗi khi tải giỏ hàng:", error);
@@ -131,7 +131,7 @@ const ShoppingCartGraphQL = forwardRef((props, ref) => {
         values.phoneNumber,
         values.notes
       );
-      if (res.data && res.data.data) {
+      if (res && res.data && res.data.checkoutSelectedItems) {
         message.success("Đặt hàng thành công!");
         setCheckoutModalVisible(false);
         form.resetFields();

@@ -406,12 +406,14 @@ const ProductsPage = () => {
                     boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
                     transition: "all 0.3s ease",
                     border: "1px solid #f0f0f0",
+                    cursor: "pointer",
                   }}
                   bodyStyle={{
                     padding: "20px",
                     background:
                       "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
                   }}
+                  onClick={() => navigate(`/product/${product.id}`)}
                   cover={
                     <div
                       style={{

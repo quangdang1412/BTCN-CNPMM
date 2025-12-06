@@ -8,6 +8,7 @@ import {
   UserOutlined,
   LogoutOutlined,
   TeamOutlined,
+  HeartOutlined,
 } from "@ant-design/icons";
 
 const Header = () => {
@@ -137,6 +138,33 @@ const Header = () => {
 
         {/* Right Icons */}
         <Space size="large">
+          {/* Favorites Icon */}
+          {auth?.isAuthenticated && (
+            <Link to="/favorites" style={{ textDecoration: "none" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  color: "white",
+                  transition: "all 0.3s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                <HeartOutlined
+                  style={{ fontSize: "28px", marginBottom: "4px" }}
+                />
+                <span style={{ fontSize: "12px" }}>Yêu thích</span>
+              </div>
+            </Link>
+          )}
+
           {/* Cart Icon */}
           <Link to="/cart" style={{ textDecoration: "none" }}>
             <Badge count={0} showZero={false}>
